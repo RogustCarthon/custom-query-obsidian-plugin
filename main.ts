@@ -38,37 +38,18 @@ export default class MyPlugin extends Plugin {
           const content = await this.app.vault.read(file);
           const lines = content.split("\n");
 
-          let result: string[] = [];
+          const result: string[] = [];
 
-          for (let i = 0; i < lines.length; ) {
+          for (let i = 0; i < lines.length; i++) {
             const line = lines[i];
             const headingMatch =
               line == "#".repeat(parseInt(headingLevel)) + " " + headingText;
             if (!headingMatch) {
-              i++;
               continue;
-            }
-            let nextHeadingIndex = lines.slice(i + 1).findIndex((l) => {
-              let currentLevel = 0;
-              for (const char of l) {
-                if (char === "#") {
-                  currentLevel++;
-                } else {
-                  break;
-                }
-              }
-              return currentLevel > 0 && currentLevel <= parseInt(headingLevel);
-            });
-            if (nextHeadingIndex === -1) {
-              nextHeadingIndex = lines.length;
             } else {
-              nextHeadingIndex += i + 1;
+              result.push(`[[${file.path}#${headingText}|${headingText}]]`);
+              result.push(`![[${file.path}#${headingText}|${headingText}]]`);
             }
-            result = result.concat(
-              [`[[${file.path}#${headingText}|${headingText}]]`],
-              lines.slice(i, nextHeadingIndex),
-            );
-            i = nextHeadingIndex;
           }
 
           if (result.length > 0) {
