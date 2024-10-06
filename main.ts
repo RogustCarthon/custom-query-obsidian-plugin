@@ -47,7 +47,7 @@ export default class MyPlugin extends Plugin {
             if (!headingMatch) {
               continue;
             } else {
-              result.push(`[[${file.path}#${headingText}|${headingText}]]`);
+              result.push(`[[${file.path}#${headingText}]]`);
               result.push(`![[${file.path}#${headingText}|${headingText}]]`);
             }
           }
