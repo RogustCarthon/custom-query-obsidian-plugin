@@ -1,4 +1,4 @@
-import { Plugin } from "obsidian";
+import { Plugin, MarkdownRenderer } from "obsidian";
 
 export default class MyPlugin extends Plugin {
   async onload() {
@@ -43,8 +43,7 @@ export default class MyPlugin extends Plugin {
           for (let i = 0; i < lines.length; ) {
             const line = lines[i];
             const headingMatch =
-              line.startsWith("#".repeat(parseInt(headingLevel))) &&
-              line.includes(headingText);
+              line == "#".repeat(parseInt(headingLevel)) + " " + headingText;
             if (!headingMatch) {
               i++;
               continue;
@@ -65,7 +64,10 @@ export default class MyPlugin extends Plugin {
             } else {
               nextHeadingIndex += i + 1;
             }
-            result = result.concat(lines.slice(i, nextHeadingIndex));
+            result = result.concat(
+              [`[[${file.path}#${headingText}|${headingText}]]`],
+              lines.slice(i, nextHeadingIndex),
+            );
             i = nextHeadingIndex;
           }
 
@@ -74,28 +76,13 @@ export default class MyPlugin extends Plugin {
           }
         }
         for (const res of endResult) {
-          const linkElement = document.createElement("a");
-          linkElement.href = `obsidian://open?vault=${encodeURIComponent(this.app.vault.getName())}&file=${encodeURIComponent(res.file)}`;
-          linkElement.textContent = `${res.file}`;
-          el.appendChild(linkElement);
-          for (const line of res.lines) {
-            let tag = `p`;
-            if (line.startsWith("#")) {
-              const match = line.match(/^(#+)/);
-              if (match) {
-                const level = match[1].length;
-                if (!showMainHeading && level == parseInt(headingLevel)) {
-                  continue;
-                }
-                tag = `h${level}`;
-              }
-            }
-            const element = document.createElement(tag);
-            element.textContent = line.startsWith("#")
-              ? line.replace(/^(#+)\s*/, "")
-              : line;
-            el.appendChild(element);
-          }
+          MarkdownRenderer.render(
+            this.app,
+            res.lines.join("\n"),
+            el,
+            res.file,
+            this,
+          );
         }
       },
     );
