@@ -17,6 +17,7 @@ export default class MyPlugin extends Plugin {
         const headingText = partsMap.get("heading");
         const headingLevel = partsMap.get("level");
         const prefix = partsMap.get("path");
+        const showMainHeading = partsMap.get("showMainHeading");
 
         if (!headingText) {
           throw new Error("Missing 'heading' value in the query.");
@@ -27,7 +28,7 @@ export default class MyPlugin extends Plugin {
         if (!prefix) {
           throw new Error("Missing 'prefix' value in the query.");
         }
-        let endResult: Array<{ lines: string[]; file: string }> = [];
+        const endResult: Array<{ lines: string[]; file: string }> = [];
 
         const files = this.app.vault.getMarkdownFiles();
 
@@ -83,6 +84,9 @@ export default class MyPlugin extends Plugin {
               const match = line.match(/^(#+)/);
               if (match) {
                 const level = match[1].length;
+                if (!showMainHeading && level == parseInt(headingLevel)) {
+                  continue;
+                }
                 tag = `h${level}`;
               }
             }
