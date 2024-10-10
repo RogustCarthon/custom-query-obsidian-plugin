@@ -67,6 +67,7 @@ export default class MyPlugin extends Plugin {
             endResult.push({ lines: result, file: file.path });
           }
         }
+        console.log(endResult);
         for (const res of endResult) {
           MarkdownRenderer.render(
             this.app,
