@@ -17,7 +17,6 @@ export default class MyPlugin extends Plugin {
         const headingText = partsMap.get("heading");
         const headingLevel = partsMap.get("level");
         const prefix = partsMap.get("path");
-        const showMainHeading = partsMap.get("showMainHeading");
 
         if (!headingText) {
           throw new Error("Missing 'heading' value in the query.");
@@ -47,8 +46,19 @@ export default class MyPlugin extends Plugin {
             if (!headingMatch) {
               continue;
             } else {
+              let sectionEnd = lines.length;
+              for (let j = i + 1; j < lines.length; j++) {
+                const nextLine = lines[j];
+                if (
+                  nextLine.startsWith("#") &&
+                  nextLine.split(" ")[0].length <= parseInt(headingLevel)
+                ) {
+                  sectionEnd = j;
+                  break;
+                }
+              }
               result.push(`[[${file.path}#${headingText}]]`);
-              result.push(`![[${file.path}#${headingText}|${headingText}]]`);
+              result.push(...lines.slice(i + 1, sectionEnd));
             }
           }
 
