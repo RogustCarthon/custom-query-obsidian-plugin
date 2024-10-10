@@ -57,7 +57,7 @@ export default class MyPlugin extends Plugin {
                   break;
                 }
               }
-              result.push(`[[${file.path}#${headingText}]]`);
+              result.push(`[[${file.path}#${headingText}|${file.name}]]`);
               result.push(...lines.slice(i + 1, sectionEnd));
               break;
             }
