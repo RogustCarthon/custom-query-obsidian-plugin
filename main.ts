@@ -69,13 +69,9 @@ export default class MyPlugin extends Plugin {
         }
         console.log(endResult);
         for (const res of endResult) {
-          MarkdownRenderer.render(
-            this.app,
-            res.lines.join("\n"),
-            el,
-            res.file,
-            this,
-          );
+          const joined = res.lines.join("\n");
+          console.log(joined);
+          MarkdownRenderer.render(this.app, joined, el, res.file, this);
         }
       },
     );
