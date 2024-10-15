@@ -111,6 +111,7 @@ function getTasks(lines: string[], file: TFile) {
       i++;
     }
   }
+  if (result.length == 0) return [];
   return Array.combine([[`[[${file.path}|${file.name}]]`], result]);
 }
 
