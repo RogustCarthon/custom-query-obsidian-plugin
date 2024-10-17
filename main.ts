@@ -43,7 +43,7 @@ function getQueryParts(query: string) {
   };
 }
 
-function getSectionUnderHeading(
+function getSectionsUnderHeading(
   lines: string[],
   file: TFile,
   headingLevel: string,
@@ -51,11 +51,12 @@ function getSectionUnderHeading(
 ) {
   const result: string[] = [];
 
-  for (let i = 0; i < lines.length; i++) {
+  for (let i = 0; i < lines.length; ) {
     const line = lines[i];
     const headingMatch =
       line == "#".repeat(parseInt(headingLevel)) + " " + headingText;
     if (!headingMatch) {
+      i++;
       continue;
     }
     let sectionEnd = lines.length;
@@ -71,7 +72,7 @@ function getSectionUnderHeading(
     }
     result.push(`[[${file.path}#${headingText}|${file.name}]]`);
     result.push(...lines.slice(i + 1, sectionEnd));
-    break;
+    i = sectionEnd;
   }
   return result;
 }
@@ -141,7 +142,7 @@ export default class MyPlugin extends Plugin {
 
           switch (elementType) {
             case "heading":
-              result = getSectionUnderHeading(
+              result = getSectionsUnderHeading(
                 lines,
                 file,
                 headingLevel || "",
