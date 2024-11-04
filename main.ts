@@ -116,12 +116,17 @@ function getTasks(lines: string[], file: TFile) {
 		}
 	};
 
+	let previousHeading = "";
+
 	for (let i = 0; i < lines.length; ) {
 		const res = getBlock(i);
 		if (res) {
 			const heading = fetchHeading(i);
 			if (heading) {
-				result.push(makeLink(file, heading, true));
+				if (heading != previousHeading) {
+					previousHeading = heading;
+					result.push("", makeLink(file, heading, true));
+				}
 			}
 			result.push(...res.lines);
 			i = res.end;
